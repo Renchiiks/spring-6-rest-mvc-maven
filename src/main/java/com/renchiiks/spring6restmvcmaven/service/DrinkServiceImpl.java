@@ -69,4 +69,21 @@ public class DrinkServiceImpl implements DrinkService {
     public Drink getDrinkByUUID(UUID UUID) {
         return this.drinks.get(UUID);
     }
+
+    @Override
+    public void createDrink(Drink drink) {
+        Drink newDrink = Drink.builder()
+                .UUID(UUID.randomUUID())
+                .version(1)
+                .drinkName(drink.getDrinkName())
+                .drinkStyle(drink.getDrinkStyle())
+                .upc(drink.getUpc())
+                .quantityOnHand(drink.getQuantityOnHand())
+                .price(drink.getPrice())
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .build();
+
+        this.drinks.put(newDrink.getUUID(), newDrink);
+    }
 }

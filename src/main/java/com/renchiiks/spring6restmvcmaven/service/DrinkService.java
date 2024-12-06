@@ -10,4 +10,6 @@ public interface DrinkService {
     List<Drink> getAllDrinks();
 
     Drink getDrinkByUUID(UUID UUID);
+
+    void createDrink(Drink drink);
 }

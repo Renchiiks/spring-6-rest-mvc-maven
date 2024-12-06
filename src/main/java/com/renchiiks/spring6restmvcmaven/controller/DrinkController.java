@@ -5,10 +5,9 @@ import com.renchiiks.spring6restmvcmaven.service.DrinkService;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -19,10 +18,17 @@ import java.util.UUID;
 @RequestMapping("/api/v1/drinks")
 public class DrinkController {
 
+    @PostMapping("/create")
+    public ResponseEntity handlePost(@RequestBody Drink drink) {
+        drinkService.createDrink(drink);
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+
     private final DrinkService drinkService;
     @GetMapping("{uuid}")
     public Drink getDrinkByUUID(@PathVariable("uuid") UUID uuid) {
-       log.debug("Getting drink by uuid: {} in DrinkController", uuid);
+       log.debug("Getting drink by uuid: {} in DrinkController testing devtool", uuid);
         return drinkService.getDrinkByUUID(uuid);
     }
 
