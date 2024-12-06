@@ -5,6 +5,7 @@ import com.renchiiks.spring6restmvcmaven.service.DrinkService;
 import lombok.AllArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +21,14 @@ public class DrinkController {
 
     @PostMapping("/create")
     public ResponseEntity handlePost(@RequestBody Drink drink) {
-        drinkService.createDrink(drink);
-        return new ResponseEntity(HttpStatus.CREATED);
+
+        Drink newDrink = drinkService.createDrink(drink);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "/api/v1/drinks/" + newDrink.getUUID());
+
+
+        return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
 

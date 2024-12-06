@@ -11,5 +11,5 @@ public interface DrinkService {
 
     Drink getDrinkByUUID(UUID UUID);
 
-    void createDrink(Drink drink);
+    Drink createDrink(Drink drink);
 }

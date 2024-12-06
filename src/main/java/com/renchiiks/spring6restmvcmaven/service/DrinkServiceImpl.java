@@ -71,7 +71,7 @@ public class DrinkServiceImpl implements DrinkService {
     }
 
     @Override
-    public void createDrink(Drink drink) {
+    public Drink createDrink(Drink drink) {
         Drink newDrink = Drink.builder()
                 .UUID(UUID.randomUUID())
                 .version(1)
@@ -84,6 +84,8 @@ public class DrinkServiceImpl implements DrinkService {
                 .updateTime(LocalDateTime.now())
                 .build();
 
+
         this.drinks.put(newDrink.getUUID(), newDrink);
+        return newDrink;
     }
 }
