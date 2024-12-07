@@ -102,4 +102,9 @@ public class DrinkServiceImpl implements DrinkService {
         this.drinks.put(uuid, existingDrink);
 
     }
+
+    @Override
+    public void deleteDrink(UUID uuid) {
+        this.drinks.remove(uuid);
+    }
 }

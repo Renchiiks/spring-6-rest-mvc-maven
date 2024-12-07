@@ -14,4 +14,6 @@ public interface DrinkService {
     Drink createDrink(Drink drink);
 
     void updateDrink(UUID uuid, Drink drink);
+
+    void deleteDrink(UUID uuid);
 }
