@@ -18,6 +18,14 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
+    @PutMapping("/{uuid}")
+    public ResponseEntity updateCustomer(@PathVariable("uuid") UUID uuid, @RequestBody Customer customer) {
+        customerService.updateCustomer(uuid, customer);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "/api/v1/customers/" + uuid);
+        return new ResponseEntity(headers, HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/create")
     public ResponseEntity createCustomer(@RequestBody Customer customer) {
         Customer newCustomer = customerService.createCustomer(customer);

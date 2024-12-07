@@ -19,6 +19,17 @@ import java.util.UUID;
 @RequestMapping("/api/v1/drinks")
 public class DrinkController {
 
+    @PutMapping("/{uuid}")
+    public ResponseEntity updateDrink(@PathVariable("uuid") UUID uuid, @RequestBody Drink drink) {
+
+        drinkService.updateDrink(uuid, drink);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "/api/v1/drinks/" + uuid);
+        return new ResponseEntity(headers, HttpStatus.NO_CONTENT);
+
+    }
+
     @PostMapping("/create")
     public ResponseEntity createDrink(@RequestBody Drink drink) {
 

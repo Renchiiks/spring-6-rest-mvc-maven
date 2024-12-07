@@ -56,4 +56,13 @@ public class CustomerServiceImpl implements CustomerService {
         this.customers.put(newCustomer.getUuid(), newCustomer);
         return newCustomer;
     }
+
+    @Override
+    public void updateCustomer(UUID uuid, Customer customer) {
+        Customer existingCustomer = this.customers.get(uuid);
+        existingCustomer.setName(customer.getName());
+        existingCustomer.setUpdateTime(LocalDateTime.now());
+
+        this.customers.put(uuid, existingCustomer);
+    }
 }

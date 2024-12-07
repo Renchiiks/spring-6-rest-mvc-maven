@@ -88,4 +88,18 @@ public class DrinkServiceImpl implements DrinkService {
         this.drinks.put(newDrink.getUUID(), newDrink);
         return newDrink;
     }
+
+    @Override
+    public void updateDrink(UUID uuid, Drink drink) {
+        Drink existingDrink = this.drinks.get(uuid);
+        existingDrink.setDrinkName(drink.getDrinkName());
+        existingDrink.setDrinkStyle(drink.getDrinkStyle());
+        existingDrink.setUpc(drink.getUpc());
+        existingDrink.setQuantityOnHand(drink.getQuantityOnHand());
+        existingDrink.setPrice(drink.getPrice());
+        existingDrink.setUpdateTime(LocalDateTime.now());
+
+        this.drinks.put(uuid, existingDrink);
+
+    }
 }
