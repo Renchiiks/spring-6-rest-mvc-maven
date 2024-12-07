@@ -3,10 +3,10 @@ package com.renchiiks.spring6restmvcmaven.controller;
 import com.renchiiks.spring6restmvcmaven.model.Customer;
 import com.renchiiks.spring6restmvcmaven.service.CustomerService;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +17,14 @@ import java.util.UUID;
 public class CustomerController {
 
     private final CustomerService customerService;
+
+    @PostMapping("/create")
+    public ResponseEntity createCustomer(@RequestBody Customer customer) {
+        Customer newCustomer = customerService.createCustomer(customer);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", "/api/v1/customers/" + newCustomer.getUuid());
+        return new ResponseEntity(headers, HttpStatus.CREATED);
+    }
 
     @GetMapping("/{id}")
     public Customer getCustomerById(@PathVariable("id") UUID id) {

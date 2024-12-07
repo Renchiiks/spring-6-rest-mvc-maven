@@ -20,7 +20,7 @@ import java.util.UUID;
 public class DrinkController {
 
     @PostMapping("/create")
-    public ResponseEntity handlePost(@RequestBody Drink drink) {
+    public ResponseEntity createDrink(@RequestBody Drink drink) {
 
         Drink newDrink = drinkService.createDrink(drink);
 
