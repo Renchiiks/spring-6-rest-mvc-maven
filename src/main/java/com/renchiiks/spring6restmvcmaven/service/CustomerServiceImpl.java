@@ -1,6 +1,6 @@
 package com.renchiiks.spring6restmvcmaven.service;
 
-import com.renchiiks.spring6restmvcmaven.model.Customer;
+import com.renchiiks.spring6restmvcmaven.model.CustomerDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -9,58 +9,58 @@ import java.util.*;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
-    private final Map<UUID, Customer> customers;
+    private final Map<UUID, CustomerDTO> customers;
 
     public CustomerServiceImpl() {
         this.customers = new HashMap<>();
 
-        Customer customer1 = Customer.builder()
-                .uuid(UUID.randomUUID())
-                .version(1)
-                .name("John Doe")
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .build();
+        CustomerDTO customer1 = CustomerDTO.builder()
+                                           .uuid(UUID.randomUUID())
+                                           .version(1)
+                                           .name("John Doe")
+                                           .createTime(LocalDateTime.now())
+                                           .updateTime(LocalDateTime.now())
+                                           .build();
 
-        Customer customer2 = Customer.builder()
-                .uuid(UUID.randomUUID())
-                .version(1)
-                .name("Jane Doe")
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .build();
+        CustomerDTO customer2 = CustomerDTO.builder()
+                                           .uuid(UUID.randomUUID())
+                                           .version(1)
+                                           .name("Jane Doe")
+                                           .createTime(LocalDateTime.now())
+                                           .updateTime(LocalDateTime.now())
+                                           .build();
 
         this.customers.put(customer1.getUuid(), customer1);
         this.customers.put(customer2.getUuid(), customer2);
     }
 
     @Override
-    public Optional<Customer> getCustomerById(UUID id) {
+    public Optional<CustomerDTO> getCustomerById(UUID id) {
         return Optional.of(this.customers.get(id));
     }
 
     @Override
-    public List<Customer> getAllCustomers() {
+    public List<CustomerDTO> getAllCustomers() {
                 return new ArrayList<>(this.customers.values());
     }
 
     @Override
-    public Customer createCustomer(Customer customer) {
-        Customer newCustomer = Customer.builder()
-                .uuid(UUID.randomUUID())
-                .version(1)
-                .name(customer.getName())
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .build();
+    public CustomerDTO createCustomer(CustomerDTO customer) {
+        CustomerDTO newCustomer = CustomerDTO.builder()
+                                             .uuid(UUID.randomUUID())
+                                             .version(1)
+                                             .name(customer.getName())
+                                             .createTime(LocalDateTime.now())
+                                             .updateTime(LocalDateTime.now())
+                                             .build();
 
         this.customers.put(newCustomer.getUuid(), newCustomer);
         return newCustomer;
     }
 
     @Override
-    public void updateCustomer(UUID uuid, Customer customer) {
-        Customer existingCustomer = this.customers.get(uuid);
+    public void updateCustomer(UUID uuid, CustomerDTO customer) {
+        CustomerDTO existingCustomer = this.customers.get(uuid);
         existingCustomer.setName(customer.getName());
         existingCustomer.setUpdateTime(LocalDateTime.now());
 
@@ -73,8 +73,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void patchCustomer(UUID uuid, Customer customer) {
-        Customer existingCustomer = this.customers.get(uuid);
+    public void patchCustomer(UUID uuid, CustomerDTO customer) {
+        CustomerDTO existingCustomer = this.customers.get(uuid);
 
         if(StringUtils.hasText(customer.getName())) {
             existingCustomer.setName(customer.getName());

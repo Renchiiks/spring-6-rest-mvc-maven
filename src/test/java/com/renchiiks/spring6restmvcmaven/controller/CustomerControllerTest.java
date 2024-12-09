@@ -1,7 +1,7 @@
 package com.renchiiks.spring6restmvcmaven.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.renchiiks.spring6restmvcmaven.model.Customer;
+import com.renchiiks.spring6restmvcmaven.model.CustomerDTO;
 import com.renchiiks.spring6restmvcmaven.service.CustomerService;
 import com.renchiiks.spring6restmvcmaven.service.CustomerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +44,7 @@ public class CustomerControllerTest {
     @Captor
             ArgumentCaptor<UUID> uuidCaptor;
     @Captor
-            ArgumentCaptor<Customer> customerCaptor;
+            ArgumentCaptor<CustomerDTO> customerCaptor;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -53,7 +53,7 @@ public class CustomerControllerTest {
 
     @Test
     void testPatchCustomer() throws Exception {
-        Customer customer = customerServiceImpl.getAllCustomers().getFirst();
+        CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
         mockMvc.perform(MockMvcRequestBuilders.patch(CustomerController.CUSTOMER_PATH_UUID, customer.getUuid())
                                               .accept(MediaType.APPLICATION_JSON)
                                               .contentType(MediaType.APPLICATION_JSON)
@@ -68,7 +68,7 @@ public class CustomerControllerTest {
 
     @Test
     void testDeleteCustomer() throws Exception {
-        Customer customer = customerServiceImpl.getAllCustomers().getFirst();
+        CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
         mockMvc.perform(MockMvcRequestBuilders.delete(CustomerController.CUSTOMER_PATH_UUID, customer.getUuid())
                                               .accept(MediaType.APPLICATION_JSON))
                .andExpect(status().isNoContent());
@@ -80,7 +80,7 @@ public class CustomerControllerTest {
 
     @Test
     void testUpdateCustomer() throws Exception {
-        Customer customer = customerServiceImpl.getAllCustomers().getFirst();
+        CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
 
         mockMvc.perform(put(CustomerController.CUSTOMER_PATH_UUID, customer.getUuid())
                 .accept(MediaType.APPLICATION_JSON)
@@ -88,18 +88,18 @@ public class CustomerControllerTest {
                 .content(objectMapper.writeValueAsString(customer)))
                 .andExpect(status().isNoContent());
 
-        verify(customerService).updateCustomer(any(UUID.class), any(Customer.class));
+        verify(customerService).updateCustomer(any(UUID.class), any(CustomerDTO.class));
     }
 
     @Test
     void testCreateCustomer() throws Exception {
 
-        Customer customer = customerServiceImpl.getAllCustomers().getFirst();
+        CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
 
         customer.setUuid(null);
         customer.setVersion(null);
 
-        given(customerService.createCustomer(any(Customer.class)))
+        given(customerService.createCustomer(any(CustomerDTO.class)))
                 .willReturn(customerServiceImpl.getAllCustomers().get(1));
 
         mockMvc.perform(post(CustomerController.CUSTOMER_PATH_CREATE)
@@ -133,7 +133,7 @@ public class CustomerControllerTest {
 
     @Test
     void testGetCustomerByUUID() throws Exception {
-        Customer customer = customerServiceImpl.getAllCustomers().getFirst();
+        CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
         UUID uuid = customer.getUuid();
 
         given(customerService.getCustomerById(uuid)).willReturn(Optional.of(customer));

@@ -1,6 +1,6 @@
 package com.renchiiks.spring6restmvcmaven.service;
 
-import com.renchiiks.spring6restmvcmaven.model.Drink;
+import com.renchiiks.spring6restmvcmaven.model.DrinkDTO;
 import com.renchiiks.spring6restmvcmaven.model.DrinkStyle;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,48 +13,48 @@ import java.util.*;
 @Slf4j
 @Service
 public class DrinkServiceImpl implements DrinkService {
-    private final Map<UUID, Drink> drinks;
+    private final Map<UUID, DrinkDTO> drinks;
 
 
 
     public DrinkServiceImpl() {
         this.drinks = new HashMap<>();
 
-        Drink drink1 = Drink.builder()
-                .UUID(UUID.randomUUID())
-                .version(1)
-                .drinkName("Beer")
-                .drinkStyle(DrinkStyle.ALCOHOLIC)
-                .upc("123456789012")
-                .quantityOnHand(10)
-                .price(new BigDecimal("10.00"))
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .build();
+        DrinkDTO drink1 = DrinkDTO.builder()
+                                  .UUID(UUID.randomUUID())
+                                  .version(1)
+                                  .drinkName("Beer")
+                                  .drinkStyle(DrinkStyle.ALCOHOLIC)
+                                  .upc("123456789012")
+                                  .quantityOnHand(10)
+                                  .price(new BigDecimal("10.00"))
+                                  .createTime(LocalDateTime.now())
+                                  .updateTime(LocalDateTime.now())
+                                  .build();
 
-        Drink drink2 = Drink.builder()
-                .UUID(UUID.randomUUID())
-                .version(1)
-                .drinkName("Wine")
-                .drinkStyle(DrinkStyle.NON_ALCOHOLIC)
-                .upc("123456789")
-                .quantityOnHand(10)
-                .price(new BigDecimal("10.00"))
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .build();
+        DrinkDTO drink2 = DrinkDTO.builder()
+                                  .UUID(UUID.randomUUID())
+                                  .version(1)
+                                  .drinkName("Wine")
+                                  .drinkStyle(DrinkStyle.NON_ALCOHOLIC)
+                                  .upc("123456789")
+                                  .quantityOnHand(10)
+                                  .price(new BigDecimal("10.00"))
+                                  .createTime(LocalDateTime.now())
+                                  .updateTime(LocalDateTime.now())
+                                  .build();
 
-        Drink drink3 = Drink.builder()
-                .UUID(UUID.randomUUID())
-                .version(1)
-                .drinkName("Juice")
-                .drinkStyle(DrinkStyle.ALCOHOLIC)
-                .upc("1234567890")
-                .quantityOnHand(10)
-                .price(new BigDecimal("10.00"))
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .build();
+        DrinkDTO drink3 = DrinkDTO.builder()
+                                  .UUID(UUID.randomUUID())
+                                  .version(1)
+                                  .drinkName("Juice")
+                                  .drinkStyle(DrinkStyle.ALCOHOLIC)
+                                  .upc("1234567890")
+                                  .quantityOnHand(10)
+                                  .price(new BigDecimal("10.00"))
+                                  .createTime(LocalDateTime.now())
+                                  .updateTime(LocalDateTime.now())
+                                  .build();
 
         this.drinks.put(drink1.getUUID(), drink1);
         this.drinks.put(drink2.getUUID(), drink2);
@@ -62,28 +62,28 @@ public class DrinkServiceImpl implements DrinkService {
     }
 
     @Override
-    public List<Drink> getAllDrinks() {
+    public List<DrinkDTO> getAllDrinks() {
         return new ArrayList<>(this.drinks.values());
     }
 
     @Override
-    public Optional<Drink> getDrinkByUUID(UUID UUID) {
+    public Optional<DrinkDTO> getDrinkByUUID(UUID UUID) {
         return Optional.of(this.drinks.get(UUID));
     }
 
     @Override
-    public Drink createDrink(Drink drink) {
-        Drink newDrink = Drink.builder()
-                .UUID(UUID.randomUUID())
-                .version(1)
-                .drinkName(drink.getDrinkName())
-                .drinkStyle(drink.getDrinkStyle())
-                .upc(drink.getUpc())
-                .quantityOnHand(drink.getQuantityOnHand())
-                .price(drink.getPrice())
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .build();
+    public DrinkDTO createDrink(DrinkDTO drink) {
+        DrinkDTO newDrink = DrinkDTO.builder()
+                                    .UUID(UUID.randomUUID())
+                                    .version(1)
+                                    .drinkName(drink.getDrinkName())
+                                    .drinkStyle(drink.getDrinkStyle())
+                                    .upc(drink.getUpc())
+                                    .quantityOnHand(drink.getQuantityOnHand())
+                                    .price(drink.getPrice())
+                                    .createTime(LocalDateTime.now())
+                                    .updateTime(LocalDateTime.now())
+                                    .build();
 
 
         this.drinks.put(newDrink.getUUID(), newDrink);
@@ -91,8 +91,8 @@ public class DrinkServiceImpl implements DrinkService {
     }
 
     @Override
-    public void updateDrink(UUID uuid, Drink drink) {
-        Drink existingDrink = this.drinks.get(uuid);
+    public void updateDrink(UUID uuid, DrinkDTO drink) {
+        DrinkDTO existingDrink = this.drinks.get(uuid);
         existingDrink.setDrinkName(drink.getDrinkName());
         existingDrink.setDrinkStyle(drink.getDrinkStyle());
         existingDrink.setUpc(drink.getUpc());
@@ -110,8 +110,8 @@ public class DrinkServiceImpl implements DrinkService {
     }
 
     @Override
-    public void patchDrink(UUID uuid, Drink drink) {
-        Drink existingDrink = this.drinks.get(uuid);
+    public void patchDrink(UUID uuid, DrinkDTO drink) {
+        DrinkDTO existingDrink = this.drinks.get(uuid);
 
         if(StringUtils.hasText(drink.getDrinkName())) {
             existingDrink.setDrinkName(drink.getDrinkName());

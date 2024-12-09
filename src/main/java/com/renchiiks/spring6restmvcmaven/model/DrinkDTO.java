@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Builder
 @Data
-public class Drink {
+public class DrinkDTO {
     private UUID UUID;
     private Integer version;
     private String drinkName;

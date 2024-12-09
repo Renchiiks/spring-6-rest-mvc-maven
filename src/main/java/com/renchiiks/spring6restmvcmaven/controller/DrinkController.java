@@ -1,6 +1,6 @@
 package com.renchiiks.spring6restmvcmaven.controller;
 
-import com.renchiiks.spring6restmvcmaven.model.Drink;
+import com.renchiiks.spring6restmvcmaven.model.DrinkDTO;
 import com.renchiiks.spring6restmvcmaven.service.DrinkService;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class DrinkController {
     private final DrinkService drinkService;
 
     @PatchMapping(DRINK_PATH_UUID)
-    public ResponseEntity patchDrink(@PathVariable("uuid") UUID uuid, @RequestBody Drink drink) {
+    public ResponseEntity patchDrink(@PathVariable("uuid") UUID uuid, @RequestBody DrinkDTO drink) {
         drinkService.patchDrink(uuid, drink);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
@@ -39,7 +39,7 @@ public class DrinkController {
     }
 
     @PutMapping(DRINK_PATH_UUID)
-    public ResponseEntity updateDrink(@PathVariable("uuid") UUID uuid, @RequestBody Drink drink) {
+    public ResponseEntity updateDrink(@PathVariable("uuid") UUID uuid, @RequestBody DrinkDTO drink) {
 
         drinkService.updateDrink(uuid, drink);
 
@@ -50,9 +50,9 @@ public class DrinkController {
     }
 
     @PostMapping(DRINK_PATH_CREATE)
-    public ResponseEntity createDrink(@RequestBody Drink drink) {
+    public ResponseEntity createDrink(@RequestBody DrinkDTO drink) {
 
-        Drink newDrink = drinkService.createDrink(drink);
+        DrinkDTO newDrink = drinkService.createDrink(drink);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/drinks/" + newDrink.getUUID());
@@ -63,13 +63,13 @@ public class DrinkController {
 
 
     @GetMapping(DRINK_PATH_UUID)
-    public Drink getDrinkByUUID(@PathVariable("uuid") UUID uuid) {
+    public DrinkDTO getDrinkByUUID(@PathVariable("uuid") UUID uuid) {
        log.debug("Getting drink by uuid: {} in DrinkController testing devtool", uuid);
         return drinkService.getDrinkByUUID(uuid).orElseThrow(NotFoundException::new);
     }
 
     @GetMapping(DRINK_PATH_ALL)
-    public List<Drink> getAllDrinks() {
+    public List<DrinkDTO> getAllDrinks() {
         log.debug("Getting all drinks in DrinkController");
         return drinkService.getAllDrinks();
     }
