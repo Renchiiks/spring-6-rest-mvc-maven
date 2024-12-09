@@ -1,7 +1,6 @@
 package com.renchiiks.spring6restmvcmaven.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.renchiiks.spring6restmvcmaven.model.Customer;
 import com.renchiiks.spring6restmvcmaven.model.Drink;
 import com.renchiiks.spring6restmvcmaven.service.DrinkService;
 import com.renchiiks.spring6restmvcmaven.service.DrinkServiceImpl;
@@ -23,7 +22,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
-import static org.springframework.http.RequestEntity.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -58,7 +56,7 @@ class DrinkControllerTest {
     @Test void testPatchDrink() throws Exception {
         Drink drink = drinkServiceImpl.getAllDrinks().getFirst();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/drinks/{uuid}", drink.getUUID())
+        mockMvc.perform(MockMvcRequestBuilders.patch(DrinkController.DRINK_PATH_UUID, drink.getUUID())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(drink)))
@@ -74,7 +72,7 @@ class DrinkControllerTest {
     void testDeleteDrink() throws Exception {
         Drink drink = drinkServiceImpl.getAllDrinks().getFirst();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/drinks/{uuid}", drink.getUUID())
+        mockMvc.perform(MockMvcRequestBuilders.delete(DrinkController.DRINK_PATH_UUID, drink.getUUID())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -88,7 +86,7 @@ class DrinkControllerTest {
     void testUpdateDrink() throws Exception {
         Drink drink = drinkServiceImpl.getAllDrinks().getFirst();
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/drinks/{uuid}", drink.getUUID())
+        mockMvc.perform(MockMvcRequestBuilders.put(DrinkController.DRINK_PATH_UUID, drink.getUUID())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(drink)))
@@ -109,7 +107,7 @@ class DrinkControllerTest {
         given(drinkService.createDrink(any(Drink.class)))
                 .willReturn(drinkServiceImpl.getAllDrinks().get(1));
 
-        mockMvc.perform(post("/api/v1/drinks/create")
+        mockMvc.perform(post(DrinkController.DRINK_PATH_CREATE)
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(drink)))
@@ -121,7 +119,7 @@ class DrinkControllerTest {
     void testGetAllDrinks() throws Exception{
         given(drinkService.getAllDrinks()).willReturn(drinkServiceImpl.getAllDrinks());
 
-        mockMvc.perform(get("/api/v1/drinks/all")
+        mockMvc.perform(get(DrinkController.DRINK_PATH_ALL)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -136,7 +134,7 @@ class DrinkControllerTest {
 
         given(drinkService.getDrinkByUUID(uuid)).willReturn(drink);
 
-        mockMvc.perform(get("/api/v1/drinks/{uuid}", uuid)
+        mockMvc.perform(get(DrinkController.DRINK_PATH_UUID, uuid)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

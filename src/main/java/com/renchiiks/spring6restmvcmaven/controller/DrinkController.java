@@ -2,7 +2,6 @@ package com.renchiiks.spring6restmvcmaven.controller;
 
 import com.renchiiks.spring6restmvcmaven.model.Drink;
 import com.renchiiks.spring6restmvcmaven.service.DrinkService;
-import lombok.AllArgsConstructor;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,24 +16,29 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v1/drinks")
 public class DrinkController {
+
+    public static final String DRINK_PATH = "/api/v1/drinks";
+    public static final String DRINK_PATH_ALL = DRINK_PATH + "/all";
+    public static final String DRINK_PATH_UUID = DRINK_PATH + "/{uuid}";
+    public static final String DRINK_PATH_CREATE = DRINK_PATH + "/create";
+
 
     private final DrinkService drinkService;
 
-    @PatchMapping("/{uuid}")
+    @PatchMapping(DRINK_PATH_UUID)
     public ResponseEntity patchDrink(@PathVariable("uuid") UUID uuid, @RequestBody Drink drink) {
         drinkService.patchDrink(uuid, drink);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{uuid}")
+    @DeleteMapping(DRINK_PATH_UUID)
     public ResponseEntity deleteDrink(@PathVariable("uuid") UUID uuid) {
         drinkService.deleteDrink(uuid);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("/{uuid}")
+    @PutMapping(DRINK_PATH_UUID)
     public ResponseEntity updateDrink(@PathVariable("uuid") UUID uuid, @RequestBody Drink drink) {
 
         drinkService.updateDrink(uuid, drink);
@@ -45,7 +49,7 @@ public class DrinkController {
 
     }
 
-    @PostMapping("/create")
+    @PostMapping(DRINK_PATH_CREATE)
     public ResponseEntity createDrink(@RequestBody Drink drink) {
 
         Drink newDrink = drinkService.createDrink(drink);
@@ -59,13 +63,13 @@ public class DrinkController {
 
 
 
-    @GetMapping("{uuid}")
+    @GetMapping(DRINK_PATH_UUID)
     public Drink getDrinkByUUID(@PathVariable("uuid") UUID uuid) {
        log.debug("Getting drink by uuid: {} in DrinkController testing devtool", uuid);
         return drinkService.getDrinkByUUID(uuid);
     }
 
-    @GetMapping("all")
+    @GetMapping(DRINK_PATH_ALL)
     public List<Drink> getAllDrinks() {
         log.debug("Getting all drinks in DrinkController");
         return drinkService.getAllDrinks();
