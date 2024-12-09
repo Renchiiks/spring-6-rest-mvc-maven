@@ -2,6 +2,7 @@ package com.renchiiks.spring6restmvcmaven.service;
 
 import com.renchiiks.spring6restmvcmaven.model.Customer;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -69,5 +70,18 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteCustomer(UUID uuid) {
         this.customers.remove(uuid);
+    }
+
+    @Override
+    public void patchCustomer(UUID uuid, Customer customer) {
+        Customer existingCustomer = this.customers.get(uuid);
+
+        if(StringUtils.hasText(customer.getName())) {
+            existingCustomer.setName(customer.getName());
+        }
+
+        if(customer.getVersion() != existingCustomer.getVersion()) {
+            existingCustomer.setVersion(customer.getVersion());
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.renchiiks.spring6restmvcmaven.model.Drink;
 import com.renchiiks.spring6restmvcmaven.service.DrinkService;
 import lombok.AllArgsConstructor;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,10 +15,16 @@ import java.util.List;
 import java.util.UUID;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/drinks")
 public class DrinkController {
+
+    @PatchMapping("/{uuid}")
+    public ResponseEntity patchDrink(@PathVariable("uuid") UUID uuid, @RequestBody Drink drink) {
+        drinkService.patchDrink(uuid, drink);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
 
     @DeleteMapping("/{uuid}")
     public ResponseEntity deleteDrink(@PathVariable("uuid") UUID uuid) {

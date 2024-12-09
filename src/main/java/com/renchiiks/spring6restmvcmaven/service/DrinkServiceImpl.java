@@ -4,6 +4,7 @@ import com.renchiiks.spring6restmvcmaven.model.Drink;
 import com.renchiiks.spring6restmvcmaven.model.DrinkStyle;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -106,5 +107,32 @@ public class DrinkServiceImpl implements DrinkService {
     @Override
     public void deleteDrink(UUID uuid) {
         this.drinks.remove(uuid);
+    }
+
+    @Override
+    public void patchDrink(UUID uuid, Drink drink) {
+        Drink existingDrink = this.drinks.get(uuid);
+
+        if(StringUtils.hasText(drink.getDrinkName())) {
+            existingDrink.setDrinkName(drink.getDrinkName());
+        }
+
+        if(StringUtils.hasText(drink.getUpc())) {
+            existingDrink.setUpc(drink.getUpc());
+        }
+
+        if(drink.getQuantityOnHand() != null) {
+            existingDrink.setQuantityOnHand(drink.getQuantityOnHand());
+        }
+
+        if(drink.getPrice() != null) {
+            existingDrink.setPrice(drink.getPrice());
+        }
+
+        if(!Objects.equals(drink.getVersion(), existingDrink.getVersion())) {
+            existingDrink.setVersion(drink.getVersion());
+        }
+
+        existingDrink.setUpdateTime(LocalDateTime.now());
     }
 }
