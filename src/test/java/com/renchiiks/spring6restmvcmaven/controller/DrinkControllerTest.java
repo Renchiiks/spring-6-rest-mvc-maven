@@ -15,8 +15,8 @@ import java.util.UUID;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.is;
 
 
 //@SpringBootTest
@@ -32,6 +32,17 @@ class DrinkControllerTest {
     DrinkServiceImpl drinkServiceImpl = new DrinkServiceImpl();
 
     @Test
+    void testGetAllDrinks() throws Exception{
+        given(drinkService.getAllDrinks()).willReturn(drinkServiceImpl.getAllDrinks());
+
+        mockMvc.perform(get("/api/v1/drinks/all")
+                                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.length()", is(4)));
+    }
+
+    @Test
     void getDrinkByUUID() throws Exception {
 
         Drink drink = drinkServiceImpl.getAllDrinks().getFirst();
@@ -39,10 +50,12 @@ class DrinkControllerTest {
 
         given(drinkService.getDrinkByUUID(uuid)).willReturn(drink);
 
-        mockMvc.perform(get("/drinks/{uuid}", uuid)
+        mockMvc.perform(get("/api/v1/drinks/{uuid}", uuid)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.uuid", is(uuid.toString())))
+                .andExpect(jsonPath("$.drinkName", is(drink.getDrinkName())));
 
     }
 }

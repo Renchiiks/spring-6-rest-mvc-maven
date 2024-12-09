@@ -20,6 +20,8 @@ import java.util.UUID;
 @RequestMapping("/api/v1/drinks")
 public class DrinkController {
 
+    private final DrinkService drinkService;
+
     @PatchMapping("/{uuid}")
     public ResponseEntity patchDrink(@PathVariable("uuid") UUID uuid, @RequestBody Drink drink) {
         drinkService.patchDrink(uuid, drink);
@@ -56,7 +58,7 @@ public class DrinkController {
     }
 
 
-    private final DrinkService drinkService;
+
     @GetMapping("{uuid}")
     public Drink getDrinkByUUID(@PathVariable("uuid") UUID uuid) {
        log.debug("Getting drink by uuid: {} in DrinkController testing devtool", uuid);
