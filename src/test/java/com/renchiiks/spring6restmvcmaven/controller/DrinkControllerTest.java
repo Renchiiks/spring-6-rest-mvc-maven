@@ -16,6 +16,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -127,12 +128,21 @@ class DrinkControllerTest {
     }
 
     @Test
+    void testGetDrinkByUUIDNotFound() throws Exception {
+
+        given(drinkService.getDrinkByUUID(any(UUID.class))).willReturn(Optional.empty());
+
+        mockMvc.perform(get(DrinkController.DRINK_PATH_UUID, UUID.randomUUID()))
+                                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void getDrinkByUUID() throws Exception {
 
         Drink drink = drinkServiceImpl.getAllDrinks().getFirst();
         UUID uuid = drink.getUUID();
 
-        given(drinkService.getDrinkByUUID(uuid)).willReturn(drink);
+        given(drinkService.getDrinkByUUID(uuid)).willReturn(Optional.of(drink));
 
         mockMvc.perform(get(DrinkController.DRINK_PATH_UUID, uuid)
                 .accept(MediaType.APPLICATION_JSON))

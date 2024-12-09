@@ -35,8 +35,8 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Customer getCustomerById(UUID id) {
-        return this.customers.get(id);
+    public Optional<Customer> getCustomerById(UUID id) {
+        return Optional.of(this.customers.get(id));
     }
 
     @Override
@@ -80,7 +80,7 @@ public class CustomerServiceImpl implements CustomerService {
             existingCustomer.setName(customer.getName());
         }
 
-        if(customer.getVersion() != existingCustomer.getVersion()) {
+        if(!Objects.equals(customer.getVersion(), existingCustomer.getVersion())) {
             existingCustomer.setVersion(customer.getVersion());
         }
     }

@@ -62,11 +62,10 @@ public class DrinkController {
     }
 
 
-
     @GetMapping(DRINK_PATH_UUID)
     public Drink getDrinkByUUID(@PathVariable("uuid") UUID uuid) {
        log.debug("Getting drink by uuid: {} in DrinkController testing devtool", uuid);
-        return drinkService.getDrinkByUUID(uuid);
+        return drinkService.getDrinkByUUID(uuid).orElseThrow(NotFoundException::new);
     }
 
     @GetMapping(DRINK_PATH_ALL)

@@ -15,6 +15,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -124,11 +125,18 @@ public class CustomerControllerTest {
     }
 
     @Test
+    void testGetCustomerByUUIDNotFound() throws Exception {
+        given(customerService.getCustomerById(any(UUID.class))).willReturn(Optional.empty());
+        mockMvc.perform(get(CustomerController.CUSTOMER_PATH_UUID, UUID.randomUUID()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void testGetCustomerByUUID() throws Exception {
         Customer customer = customerServiceImpl.getAllCustomers().getFirst();
         UUID uuid = customer.getUuid();
 
-        given(customerService.getCustomerById(uuid)).willReturn(customer);
+        given(customerService.getCustomerById(uuid)).willReturn(Optional.of(customer));
 
         mockMvc.perform(get(CustomerController.CUSTOMER_PATH_UUID, uuid)
                 .accept("application/json"))

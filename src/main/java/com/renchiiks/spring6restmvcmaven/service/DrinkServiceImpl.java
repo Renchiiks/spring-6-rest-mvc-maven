@@ -67,8 +67,8 @@ public class DrinkServiceImpl implements DrinkService {
     }
 
     @Override
-    public Drink getDrinkByUUID(UUID UUID) {
-        return this.drinks.get(UUID);
+    public Optional<Drink> getDrinkByUUID(UUID UUID) {
+        return Optional.of(this.drinks.get(UUID));
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -51,9 +52,11 @@ public class CustomerController {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
+
+
     @GetMapping(CUSTOMER_PATH_UUID)
-    public Customer getCustomerById(@PathVariable("uuid") UUID uuid) {
-        return customerService.getCustomerById(uuid);
+    public Optional<Customer> getCustomerById(@PathVariable("uuid") UUID uuid) {
+        return Optional.ofNullable(customerService.getCustomerById(uuid).orElseThrow(NotFoundException::new));
     }
 
     @GetMapping(CUSTOMER_PATH_ALL)
