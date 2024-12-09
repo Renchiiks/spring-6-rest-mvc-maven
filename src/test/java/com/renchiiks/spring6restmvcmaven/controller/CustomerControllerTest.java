@@ -1,6 +1,5 @@
 package com.renchiiks.spring6restmvcmaven.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.renchiiks.spring6restmvcmaven.model.Customer;
 import com.renchiiks.spring6restmvcmaven.service.CustomerService;
@@ -8,6 +7,7 @@ import com.renchiiks.spring6restmvcmaven.service.CustomerServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -41,9 +41,29 @@ public class CustomerControllerTest {
 
     CustomerServiceImpl customerServiceImpl;
 
+    @Captor
+            ArgumentCaptor<UUID> uuidCaptor;
+    @Captor
+            ArgumentCaptor<Customer> customerCaptor;
+
     @BeforeEach
     void setUp() throws Exception {
         customerServiceImpl = new CustomerServiceImpl();
+    }
+
+    @Test
+    void testPatchCustomer() throws Exception {
+        Customer customer = customerServiceImpl.getAllCustomers().getFirst();
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/customers/{uuid}", customer.getUuid())
+                                              .accept(MediaType.APPLICATION_JSON)
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(objectMapper.writeValueAsString(customer)))
+               .andExpect(status().isNoContent());
+
+        verify(customerService).patchCustomer(uuidCaptor.capture(), customerCaptor.capture());
+
+        assertThat(customer.getUuid()).isEqualTo(uuidCaptor.getValue());
+        assertThat(customer.getVersion()).isEqualTo(customerCaptor.getValue().getVersion());
     }
 
     @Test
@@ -53,7 +73,6 @@ public class CustomerControllerTest {
                                               .accept(MediaType.APPLICATION_JSON))
                .andExpect(status().isNoContent());
 
-        ArgumentCaptor<UUID> uuidCaptor = ArgumentCaptor.forClass(UUID.class);
         verify(customerService).deleteCustomer(uuidCaptor.capture());
 
         assertThat(customer.getUuid()).isEqualTo(uuidCaptor.getValue());

@@ -8,6 +8,7 @@ import com.renchiiks.spring6restmvcmaven.service.DrinkServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -42,11 +43,31 @@ class DrinkControllerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Captor
+            ArgumentCaptor<UUID> uuidCaptor;
+    @Captor
+            ArgumentCaptor<Drink> drinkCaptor;
+
     DrinkServiceImpl drinkServiceImpl;
 
     @BeforeEach
     void setUp() {
         drinkServiceImpl = new DrinkServiceImpl();
+    }
+
+    @Test void testPatchDrink() throws Exception {
+        Drink drink = drinkServiceImpl.getAllDrinks().getFirst();
+
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/drinks/{uuid}", drink.getUUID())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(drink)))
+                .andExpect(status().isNoContent());
+
+        verify(drinkService).patchDrink(uuidCaptor.capture(), drinkCaptor.capture());
+
+        assertThat(drink.getUUID()).isEqualTo(uuidCaptor.getValue());
+        assertThat(drink.getVersion()).isEqualTo(drinkCaptor.getValue().getVersion());
     }
 
     @Test
@@ -56,7 +77,8 @@ class DrinkControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/drinks/{uuid}", drink.getUUID())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
-        ArgumentCaptor<UUID> uuidCaptor = ArgumentCaptor.forClass(UUID.class);
+
+
         verify(drinkService).deleteDrink(uuidCaptor.capture());
 
         assertThat(drink.getUUID()).isEqualTo(uuidCaptor.getValue());
