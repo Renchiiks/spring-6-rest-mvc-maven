@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 class DrinkControllerIT {
     @Autowired
@@ -26,6 +27,29 @@ class DrinkControllerIT {
 
     @Autowired
     DrinkMapper drinkMapper;
+
+    @Test
+    void testPatchDrinkNotFound() {
+        assertThrows(NotFoundException.class, () -> drinkController.patchDrink(UUID.randomUUID(), DrinkDTO.builder().build()));
+    }
+
+    @Test
+    void testPatchDrink() {
+        Drink drink = drinkRepository.findAll().getFirst();
+
+        DrinkDTO drinkDTO = drinkMapper.drinkToDrinkDTO(drink);
+        drinkDTO.setUUID(null);
+        drinkDTO.setVersion(null);
+
+        final String name = "UPDATED";
+        drinkDTO.setDrinkName(name);
+
+        ResponseEntity responseEntity = drinkController.patchDrink(drink.getUUID(), drinkDTO);
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+
+        Drink updatedDrink = drinkRepository.findById(drink.getUUID()).get();
+        assertThat(updatedDrink.getDrinkName()).isEqualTo(name);
+    }
 
     @Test
     void testDeleteDrinkNotFound() {
