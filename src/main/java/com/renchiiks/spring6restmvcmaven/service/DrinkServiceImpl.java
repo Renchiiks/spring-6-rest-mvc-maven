@@ -91,7 +91,7 @@ public class DrinkServiceImpl implements DrinkService {
     }
 
     @Override
-    public void updateDrink(UUID uuid, DrinkDTO drink) {
+    public Optional<DrinkDTO> updateDrink(UUID uuid, DrinkDTO drink) {
         DrinkDTO existingDrink = this.drinks.get(uuid);
         existingDrink.setDrinkName(drink.getDrinkName());
         existingDrink.setDrinkStyle(drink.getDrinkStyle());
@@ -101,12 +101,14 @@ public class DrinkServiceImpl implements DrinkService {
         existingDrink.setUpdateTime(LocalDateTime.now());
 
         this.drinks.put(uuid, existingDrink);
-
+    return Optional.of(existingDrink);
     }
 
     @Override
-    public void deleteDrink(UUID uuid) {
+    public Boolean deleteDrink(UUID uuid) {
+
         this.drinks.remove(uuid);
+        return true;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.renchiiks.spring6restmvcmaven.service;
 
+import com.renchiiks.spring6restmvcmaven.entities.Drink;
 import com.renchiiks.spring6restmvcmaven.mappers.DrinkMapper;
 import com.renchiiks.spring6restmvcmaven.model.DrinkDTO;
 import com.renchiiks.spring6restmvcmaven.repositories.DrinkRepository;
@@ -30,17 +31,31 @@ public class DrinkServiceJPA implements DrinkService {
 
     @Override
     public DrinkDTO createDrink(DrinkDTO drink) {
-        return null;
+        return drinkMapper.drinkToDrinkDTO(drinkRepository.save(drinkMapper.drinkDTOToDrink(drink)));
     }
 
     @Override
-    public void updateDrink(UUID uuid, DrinkDTO drink) {
+    public Optional<DrinkDTO> updateDrink(UUID uuid, DrinkDTO drink) {
+            Drink foundDrink = drinkRepository.findById(uuid).orElse(null);
+            if (foundDrink == null) {
+                return Optional.empty();
+            }
+            foundDrink.setDrinkName(drink.getDrinkName());
+            foundDrink.setDrinkStyle(drink.getDrinkStyle());
+            foundDrink.setUpc(drink.getUpc());
+            foundDrink.setPrice(drink.getPrice());
+            drinkRepository.save(foundDrink);
 
+        return  Optional.of(drinkMapper.drinkToDrinkDTO(foundDrink));
     }
 
     @Override
-    public void deleteDrink(UUID uuid) {
-
+    public Boolean deleteDrink(UUID uuid) {
+        if(drinkRepository.existsById(uuid)) {
+            drinkRepository.deleteById(uuid);
+            return true;
+        }
+        return false;
     }
 
     @Override

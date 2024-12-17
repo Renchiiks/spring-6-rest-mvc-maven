@@ -73,6 +73,8 @@ class DrinkControllerTest {
     void testDeleteDrink() throws Exception {
         DrinkDTO drink = drinkServiceImpl.getAllDrinks().getFirst();
 
+        given(drinkService.deleteDrink(any())).willReturn(true);
+
         mockMvc.perform(MockMvcRequestBuilders.delete(DrinkController.DRINK_PATH_UUID, drink.getUUID())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
@@ -86,6 +88,8 @@ class DrinkControllerTest {
     @Test
     void testUpdateDrink() throws Exception {
         DrinkDTO drink = drinkServiceImpl.getAllDrinks().getFirst();
+
+        given((drinkService.updateDrink(any(), any()))).willReturn(Optional.of(drink));
 
         mockMvc.perform(MockMvcRequestBuilders.put(DrinkController.DRINK_PATH_UUID, drink.getUUID())
                 .accept(MediaType.APPLICATION_JSON)

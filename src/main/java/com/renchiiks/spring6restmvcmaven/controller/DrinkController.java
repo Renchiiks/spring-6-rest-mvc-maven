@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -34,14 +35,20 @@ public class DrinkController {
 
     @DeleteMapping(DRINK_PATH_UUID)
     public ResponseEntity deleteDrink(@PathVariable("uuid") UUID uuid) {
-        drinkService.deleteDrink(uuid);
+
+        if (!drinkService.deleteDrink(uuid)) {
+            throw new NotFoundException();
+        }
+
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping(DRINK_PATH_UUID)
     public ResponseEntity updateDrink(@PathVariable("uuid") UUID uuid, @RequestBody DrinkDTO drink) {
-
-        drinkService.updateDrink(uuid, drink);
+        Optional<DrinkDTO> drinkDTO = drinkService.updateDrink(uuid, drink);
+        if (drinkDTO.isEmpty()){
+            throw new NotFoundException();
+        }
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/api/v1/drinks/" + uuid);
