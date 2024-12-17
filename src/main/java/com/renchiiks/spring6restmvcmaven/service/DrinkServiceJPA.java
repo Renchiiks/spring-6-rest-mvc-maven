@@ -7,6 +7,7 @@ import com.renchiiks.spring6restmvcmaven.repositories.DrinkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,7 +60,26 @@ public class DrinkServiceJPA implements DrinkService {
     }
 
     @Override
-    public void patchDrink(UUID uuid, DrinkDTO drink) {
+    public Optional<DrinkDTO> patchDrink(UUID uuid, DrinkDTO drink) {
+        Drink drinkToUpdate = drinkRepository.findById(uuid).orElse(null);
+        if (drinkToUpdate == null) {
+            return Optional.empty();
+        }
 
+        if (StringUtils.hasText(drink.getDrinkName())) {
+            drinkToUpdate.setDrinkName(drink.getDrinkName());
+        }
+        if (StringUtils.hasText(drink.getUpc())) {
+            drinkToUpdate.setUpc(drink.getUpc());
+        }
+        if (drink.getQuantityOnHand() != null) {
+            drinkToUpdate.setQuantityOnHand(drink.getQuantityOnHand());
+        }
+        if (drink.getPrice() != null) {
+            drinkToUpdate.setPrice(drink.getPrice());
+        }
+
+        drinkRepository.save(drinkToUpdate);
+        return Optional.of(drinkMapper.drinkToDrinkDTO(drinkToUpdate));
     }
 }

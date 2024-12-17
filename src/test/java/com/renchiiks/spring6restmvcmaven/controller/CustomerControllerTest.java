@@ -54,6 +54,9 @@ public class CustomerControllerTest {
     @Test
     void testPatchCustomer() throws Exception {
         CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
+
+        given((customerService.patchCustomer(any(UUID.class), any(CustomerDTO.class))))
+                .willReturn(Optional.of(customer));
         mockMvc.perform(MockMvcRequestBuilders.patch(CustomerController.CUSTOMER_PATH_UUID, customer.getUuid())
                                               .accept(MediaType.APPLICATION_JSON)
                                               .contentType(MediaType.APPLICATION_JSON)
@@ -69,6 +72,9 @@ public class CustomerControllerTest {
     @Test
     void testDeleteCustomer() throws Exception {
         CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
+
+        given((customerService.deleteCustomer(any(UUID.class))))
+                .willReturn(true);
         mockMvc.perform(MockMvcRequestBuilders.delete(CustomerController.CUSTOMER_PATH_UUID, customer.getUuid())
                                               .accept(MediaType.APPLICATION_JSON))
                .andExpect(status().isNoContent());
@@ -81,6 +87,9 @@ public class CustomerControllerTest {
     @Test
     void testUpdateCustomer() throws Exception {
         CustomerDTO customer = customerServiceImpl.getAllCustomers().getFirst();
+
+        given((customerService.updateCustomer(any(UUID.class), any(CustomerDTO.class))))
+                .willReturn(Optional.of(customer));
 
         mockMvc.perform(put(CustomerController.CUSTOMER_PATH_UUID, customer.getUuid())
                 .accept(MediaType.APPLICATION_JSON)

@@ -29,7 +29,11 @@ public class DrinkController {
 
     @PatchMapping(DRINK_PATH_UUID)
     public ResponseEntity patchDrink(@PathVariable("uuid") UUID uuid, @RequestBody DrinkDTO drink) {
-        drinkService.patchDrink(uuid, drink);
+        Optional<DrinkDTO> drinkDTO = drinkService.patchDrink(uuid, drink);
+        if (drinkDTO.isEmpty()) {
+            throw new NotFoundException();
+        }
+
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

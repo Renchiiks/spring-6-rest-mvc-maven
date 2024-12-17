@@ -59,21 +59,25 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public void updateCustomer(UUID uuid, CustomerDTO customer) {
+    public Optional<CustomerDTO> updateCustomer(UUID uuid, CustomerDTO customer) {
         CustomerDTO existingCustomer = this.customers.get(uuid);
         existingCustomer.setName(customer.getName());
         existingCustomer.setUpdateTime(LocalDateTime.now());
 
         this.customers.put(uuid, existingCustomer);
+        return Optional.of(existingCustomer);
     }
 
     @Override
-    public void deleteCustomer(UUID uuid) {
+    public Boolean deleteCustomer(UUID uuid) {
+
         this.customers.remove(uuid);
+
+        return true;
     }
 
     @Override
-    public void patchCustomer(UUID uuid, CustomerDTO customer) {
+    public Optional<CustomerDTO> patchCustomer(UUID uuid, CustomerDTO customer) {
         CustomerDTO existingCustomer = this.customers.get(uuid);
 
         if(StringUtils.hasText(customer.getName())) {
@@ -83,5 +87,7 @@ public class CustomerServiceImpl implements CustomerService {
         if(!Objects.equals(customer.getVersion(), existingCustomer.getVersion())) {
             existingCustomer.setVersion(customer.getVersion());
         }
+
+        return Optional.of(existingCustomer);
     }
 }

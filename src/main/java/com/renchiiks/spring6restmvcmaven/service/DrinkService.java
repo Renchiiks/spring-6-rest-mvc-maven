@@ -18,5 +18,5 @@ public interface DrinkService {
 
     Boolean deleteDrink(UUID uuid);
 
-    void patchDrink(UUID uuid, DrinkDTO drink);
+    Optional<DrinkDTO> patchDrink(UUID uuid, DrinkDTO drink);
 }

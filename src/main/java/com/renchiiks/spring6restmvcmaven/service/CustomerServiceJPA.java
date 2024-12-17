@@ -1,12 +1,15 @@
 package com.renchiiks.spring6restmvcmaven.service;
 
+import com.renchiiks.spring6restmvcmaven.entities.Customer;
 import com.renchiiks.spring6restmvcmaven.mappers.CustomerMapper;
 import com.renchiiks.spring6restmvcmaven.model.CustomerDTO;
 import com.renchiiks.spring6restmvcmaven.repositories.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,21 +35,47 @@ public class CustomerServiceJPA implements CustomerService {
 
     @Override
     public CustomerDTO createCustomer(CustomerDTO customer) {
-        return null;
+        return customerMapper.customerToCustomerDTO(
+                customerRepository.save(
+                        customerMapper.customerDTOToCustomer(customer)));
     }
 
     @Override
-    public void updateCustomer(UUID uuid, CustomerDTO customer) {
+    public Optional<CustomerDTO> updateCustomer(UUID uuid, CustomerDTO customer) {
+        Customer customerToUpdate = customerRepository.findById(uuid).orElse(null);
+        if (customerToUpdate == null) {
+            return Optional.empty();
+        }
 
+        customerToUpdate.setName(customer.getName());
+        customerToUpdate.setUpdateTime(LocalDateTime.now());
+        customerRepository.save(customerToUpdate);
+
+        return Optional.of(customerMapper.customerToCustomerDTO(customerToUpdate));
     }
 
     @Override
-    public void deleteCustomer(UUID uuid) {
-
+    public Boolean deleteCustomer(UUID uuid) {
+        if (customerRepository.existsById(uuid)) {
+            customerRepository.deleteById(uuid);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void patchCustomer(UUID uuid, CustomerDTO customer) {
+    public Optional<CustomerDTO> patchCustomer(UUID uuid, CustomerDTO customer) {
+        Customer customerToUpdate = customerRepository.findById(uuid).orElse(null);
+        if (customerToUpdate == null) {
+            return Optional.empty();
+        }
 
+        if (StringUtils.hasText(customer.getName())) {
+            customerToUpdate.setName(customer.getName());
+        }
+
+        customerToUpdate.setUpdateTime(LocalDateTime.now());
+        customerRepository.save(customerToUpdate);
+        return Optional.of(customerMapper.customerToCustomerDTO(customerToUpdate));
     }
 }

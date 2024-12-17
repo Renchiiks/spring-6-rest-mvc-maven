@@ -57,6 +57,9 @@ class DrinkControllerTest {
     @Test void testPatchDrink() throws Exception {
         DrinkDTO drink = drinkServiceImpl.getAllDrinks().getFirst();
 
+        given((drinkService.patchDrink(any(UUID.class), any(DrinkDTO.class))))
+                .willReturn(Optional.of(drink));
+
         mockMvc.perform(MockMvcRequestBuilders.patch(DrinkController.DRINK_PATH_UUID, drink.getUUID())
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
