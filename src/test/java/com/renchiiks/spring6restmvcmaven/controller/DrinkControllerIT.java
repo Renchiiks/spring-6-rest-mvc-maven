@@ -1,22 +1,33 @@
 package com.renchiiks.spring6restmvcmaven.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.renchiiks.spring6restmvcmaven.entities.Drink;
 import com.renchiiks.spring6restmvcmaven.mappers.DrinkMapper;
 import com.renchiiks.spring6restmvcmaven.model.DrinkDTO;
 import com.renchiiks.spring6restmvcmaven.repositories.DrinkRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.is;
 
 @SpringBootTest
 class DrinkControllerIT {
@@ -28,28 +39,40 @@ class DrinkControllerIT {
     @Autowired
     DrinkMapper drinkMapper;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Autowired
+    WebApplicationContext webApplicationContext;
+
+    MockMvc mockMvc;
+
+    @BeforeEach
+    void setUp() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+    }
+
     @Test
     void testPatchDrinkNotFound() {
         assertThrows(NotFoundException.class, () -> drinkController.patchDrink(UUID.randomUUID(), DrinkDTO.builder().build()));
     }
 
     @Test
-    void testPatchDrink() {
+    void testPatchDrinkBadName() throws Exception {
         Drink drink = drinkRepository.findAll().getFirst();
 
-        DrinkDTO drinkDTO = drinkMapper.drinkToDrinkDTO(drink);
-        drinkDTO.setUUID(null);
-        drinkDTO.setVersion(null);
+        Map<String, Object> drinkMap = new HashMap<>();
+        drinkMap.put("drinkName", "Waterqwertyuioppasdfghjklzxcvbnm qwertyuiosdfghjkxcvbnmqwertyuiopsdfgWaterqwertyuioppasdfghjklzxcvbnm qwertyuiosdfghjkxcvbnmqwertyuiopsdfg");
 
-        final String name = "UPDATED";
-        drinkDTO.setDrinkName(name);
+         mockMvc.perform(MockMvcRequestBuilders.patch(DrinkController.DRINK_PATH_UUID, drink.getUUID())
+                                                                 .accept(MediaType.APPLICATION_JSON)
+                                                                 .contentType(MediaType.APPLICATION_JSON)
+                                                                 .content(objectMapper.writeValueAsString(drinkMap)))
+                                  .andExpect(status().isBadRequest());
 
-        ResponseEntity responseEntity = drinkController.patchDrink(drink.getUUID(), drinkDTO);
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        Drink updatedDrink = drinkRepository.findById(drink.getUUID()).get();
-        assertThat(updatedDrink.getDrinkName()).isEqualTo(name);
     }
+
 
     @Test
     void testDeleteDrinkNotFound() {

@@ -1,0 +1,52 @@
+[
+  {
+    "objectName": "drinkDTO",
+    "field": "drinkName",
+    "rejectedValue": null,
+    "codes": [
+      "NotBlank.drinkDTO.drinkName",
+      "NotBlank.drinkName",
+      "NotBlank.java.lang.String",
+      "NotBlank"
+    ],
+    "arguments": [
+      {
+        "codes": [
+          "drinkDTO.drinkName",
+          "drinkName"
+        ],
+        "arguments": null,
+        "defaultMessage": "drinkName",
+        "code": "drinkName"
+      }
+    ],
+    "defaultMessage": "must not be blank",
+    "bindingFailure": false,
+    "code": "NotBlank"
+  },
+  {
+    "objectName": "drinkDTO",
+    "field": "drinkName",
+    "rejectedValue": null,
+    "codes": [
+      "NotNull.drinkDTO.drinkName",
+      "NotNull.drinkName",
+      "NotNull.java.lang.String",
+      "NotNull"
+    ],
+    "arguments": [
+      {
+        "codes": [
+          "drinkDTO.drinkName",
+          "drinkName"
+        ],
+        "arguments": null,
+        "defaultMessage": "drinkName",
+        "code": "drinkName"
+      }
+    ],
+    "defaultMessage": "must not be null",
+    "bindingFailure": false,
+    "code": "NotNull"
+  }
+]

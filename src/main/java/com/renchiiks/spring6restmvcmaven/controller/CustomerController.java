@@ -73,5 +73,4 @@ public class CustomerController {
     public List<CustomerDTO> getAllCustomers() {
         return customerService.getAllCustomers();
     }
-
 }

@@ -1,6 +1,7 @@
 package com.renchiiks.spring6restmvcmaven.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.renchiiks.spring6restmvcmaven.entities.Drink;
 import com.renchiiks.spring6restmvcmaven.model.DrinkDTO;
 import com.renchiiks.spring6restmvcmaven.service.DrinkService;
 import com.renchiiks.spring6restmvcmaven.service.DrinkServiceImpl;
@@ -14,6 +15,7 @@ import org.springframework.http.MediaType;
 
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Optional;
@@ -36,16 +38,18 @@ class DrinkControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @MockitoBean
-    DrinkService drinkService;
+
 
     @Autowired
     ObjectMapper objectMapper;
 
+    @MockitoBean
+    DrinkService drinkService;
+
     @Captor
-            ArgumentCaptor<UUID> uuidCaptor;
+    ArgumentCaptor<UUID> uuidCaptor;
     @Captor
-            ArgumentCaptor<DrinkDTO> drinkCaptor;
+    ArgumentCaptor<DrinkDTO> drinkCaptor;
 
     DrinkServiceImpl drinkServiceImpl;
 
@@ -54,17 +58,19 @@ class DrinkControllerTest {
         drinkServiceImpl = new DrinkServiceImpl();
     }
 
-    @Test void testPatchDrink() throws Exception {
+
+    @Test
+    void testPatchDrink() throws Exception {
         DrinkDTO drink = drinkServiceImpl.getAllDrinks().getFirst();
 
         given((drinkService.patchDrink(any(UUID.class), any(DrinkDTO.class))))
                 .willReturn(Optional.of(drink));
 
         mockMvc.perform(MockMvcRequestBuilders.patch(DrinkController.DRINK_PATH_UUID, drink.getUUID())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(drink)))
-                .andExpect(status().isNoContent());
+                                              .accept(MediaType.APPLICATION_JSON)
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(objectMapper.writeValueAsString(drink)))
+               .andExpect(status().isNoContent());
 
         verify(drinkService).patchDrink(uuidCaptor.capture(), drinkCaptor.capture());
 
@@ -79,13 +85,30 @@ class DrinkControllerTest {
         given(drinkService.deleteDrink(any())).willReturn(true);
 
         mockMvc.perform(MockMvcRequestBuilders.delete(DrinkController.DRINK_PATH_UUID, drink.getUUID())
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent());
+                                              .accept(MediaType.APPLICATION_JSON))
+               .andExpect(status().isNoContent());
 
 
         verify(drinkService).deleteDrink(uuidCaptor.capture());
 
         assertThat(drink.getUUID()).isEqualTo(uuidCaptor.getValue());
+    }
+
+    @Test
+    void testUpdateDrinkEmptyName() throws Exception {
+        DrinkDTO drink = drinkServiceImpl.getAllDrinks().getFirst();
+        drink.setDrinkName("");
+        given((drinkService.updateDrink(any(), any()))).willReturn(Optional.of(drink));
+
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.put(DrinkController.DRINK_PATH_UUID, drink.getUUID())
+                                                                 .accept(MediaType.APPLICATION_JSON)
+                                                                 .contentType(MediaType.APPLICATION_JSON)
+                                                                 .content(objectMapper.writeValueAsString(drink)))
+                                  .andExpect(status().isBadRequest())
+                                  .andExpect(jsonPath("$.length()", is(1))).andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
+
     }
 
     @Test
@@ -95,13 +118,31 @@ class DrinkControllerTest {
         given((drinkService.updateDrink(any(), any()))).willReturn(Optional.of(drink));
 
         mockMvc.perform(MockMvcRequestBuilders.put(DrinkController.DRINK_PATH_UUID, drink.getUUID())
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(drink)))
-                .andExpect(status().isNoContent());
+                                              .accept(MediaType.APPLICATION_JSON)
+                                              .contentType(MediaType.APPLICATION_JSON)
+                                              .content(objectMapper.writeValueAsString(drink)))
+               .andExpect(status().isNoContent());
 
         verify(drinkService).updateDrink(any(UUID.class), any(DrinkDTO.class));
 
+    }
+
+
+    @Test
+    void testCreateDrinkNullDrinkName() throws Exception {
+        DrinkDTO drink = DrinkDTO.builder().drinkName(null).build();
+
+        given(drinkService.createDrink(any(DrinkDTO.class)))
+                .willReturn(drinkServiceImpl.getAllDrinks().get(1));
+
+        MvcResult result = mockMvc.perform(post(DrinkController.DRINK_PATH_CREATE)
+                                                   .accept(MediaType.APPLICATION_JSON)
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .content(objectMapper.writeValueAsString(drink)))
+                                  .andExpect(status().isBadRequest())
+                                  .andExpect(jsonPath("$.length()", is(6))).andReturn();
+
+        System.out.println(result.getResponse().getContentAsString());
     }
 
     @Test
@@ -119,19 +160,19 @@ class DrinkControllerTest {
                                 .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(drink)))
-                                .andExpect(status().isCreated())
-                                .andExpect(header().exists("Location"));
+               .andExpect(status().isCreated())
+               .andExpect(header().exists("Location"));
     }
 
     @Test
-    void testGetAllDrinks() throws Exception{
+    void testGetAllDrinks() throws Exception {
         given(drinkService.getAllDrinks()).willReturn(drinkServiceImpl.getAllDrinks());
 
         mockMvc.perform(get(DrinkController.DRINK_PATH_ALL)
                                 .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.length()", is(3)));
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(jsonPath("$.length()", is(3)));
     }
 
     @Test
@@ -140,7 +181,7 @@ class DrinkControllerTest {
         given(drinkService.getDrinkByUUID(any(UUID.class))).willReturn(Optional.empty());
 
         mockMvc.perform(get(DrinkController.DRINK_PATH_UUID, UUID.randomUUID()))
-                                .andExpect(status().isNotFound());
+               .andExpect(status().isNotFound());
     }
 
     @Test
@@ -152,11 +193,11 @@ class DrinkControllerTest {
         given(drinkService.getDrinkByUUID(uuid)).willReturn(Optional.of(drink));
 
         mockMvc.perform(get(DrinkController.DRINK_PATH_UUID, uuid)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.uuid", is(uuid.toString())))
-                .andExpect(jsonPath("$.drinkName", is(drink.getDrinkName())));
+                                .accept(MediaType.APPLICATION_JSON))
+               .andExpect(status().isOk())
+               .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+               .andExpect(jsonPath("$.uuid", is(uuid.toString())))
+               .andExpect(jsonPath("$.drinkName", is(drink.getDrinkName())));
 
     }
 }

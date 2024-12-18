@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,7 +49,7 @@ public class DrinkController {
     }
 
     @PutMapping(DRINK_PATH_UUID)
-    public ResponseEntity updateDrink(@PathVariable("uuid") UUID uuid, @RequestBody DrinkDTO drink) {
+    public ResponseEntity updateDrink(@PathVariable("uuid") UUID uuid,@Validated @RequestBody DrinkDTO drink) {
         Optional<DrinkDTO> drinkDTO = drinkService.updateDrink(uuid, drink);
         if (drinkDTO.isEmpty()){
             throw new NotFoundException();
@@ -61,7 +62,7 @@ public class DrinkController {
     }
 
     @PostMapping(DRINK_PATH_CREATE)
-    public ResponseEntity createDrink(@RequestBody DrinkDTO drink) {
+    public ResponseEntity createDrink(@Validated @RequestBody DrinkDTO drink) {
 
         DrinkDTO newDrink = drinkService.createDrink(drink);
 
