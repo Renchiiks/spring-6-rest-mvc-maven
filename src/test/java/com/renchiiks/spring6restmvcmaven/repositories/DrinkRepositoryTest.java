@@ -24,7 +24,7 @@ class DrinkRepositoryTest {
     DrinkRepository drinkRepository;
 
     @Test
-    void testGetDrinksByName(){
+    void testGetDrinksByName() {
         List<Drink> list = drinkRepository.findAllByDrinkNameContaining("ang");
 
         assertThat(list.size()).isGreaterThan(0);
@@ -33,17 +33,19 @@ class DrinkRepositoryTest {
     @Test
     void testSaveDrinkNameTooLong() {
 
-        assertThrows(ConstraintViolationException.class, () -> {
-                         Drink drink =
-                                 drinkRepository.save(Drink.builder()
-                                                                 .drinkName("Waterqwertyuioppasdfghjklzxcvbnm qwertyuiosdfghjkxcvbnmqwertyuiopsdfg")
-                                                                 .drinkStyle(DrinkStyle.NON_ALCOHOLIC)
-                                                                 .price(BigDecimal.valueOf(1.5))
-                                                                 .upc("123456789012")
-                                                                 .build());
+        assertThrows(ConstraintViolationException.class, () ->
+            {
 
-                         drinkRepository.flush();
-                     });
+                drinkRepository.save(Drink.builder()
+                                          .drinkName("Waterqwertyuioppasdfghjklzxcvbnm " +
+                                                             "qwertyuiosdfghjkxcvbnmqwertyuiopsdfg")
+                                          .drinkStyle(DrinkStyle.NON_ALCOHOLIC)
+                                          .price(BigDecimal.valueOf(1.5))
+                                          .upc("123456789012")
+                                          .build());
+
+                drinkRepository.flush();
+            });
     }
 
     @Test
@@ -55,7 +57,7 @@ class DrinkRepositoryTest {
                                                 .upc("123456789012")
                                                 .build());
 
-                                           drinkRepository.flush();
+        drinkRepository.flush();
 
         assertNotNull(drink.getUUID());
         assertThat(drink.getUUID()).isNotNull();
