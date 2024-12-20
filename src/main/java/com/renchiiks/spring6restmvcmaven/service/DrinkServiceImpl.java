@@ -62,7 +62,7 @@ public class DrinkServiceImpl implements DrinkService {
     }
 
     @Override
-    public List<DrinkDTO> getAllDrinks() {
+    public List<DrinkDTO> getAllDrinks(String drinkName) {
         return new ArrayList<>(this.drinks.values());
     }
 

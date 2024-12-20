@@ -4,8 +4,7 @@ import com.renchiiks.spring6restmvcmaven.repositories.CustomerRepository;
 import com.renchiiks.spring6restmvcmaven.repositories.DrinkRepository;
 import com.renchiiks.spring6restmvcmaven.service.DrinkCsvService;
 import com.renchiiks.spring6restmvcmaven.service.DrinkCsvServiceImpl;
-import lombok.RequiredArgsConstructor;
-import org.junit.Ignore;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,7 +2,7 @@ package com.renchiiks.spring6restmvcmaven.service;
 
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.renchiiks.spring6restmvcmaven.entities.DrinkCSVRecord;
-import org.springframework.context.annotation.Import;
+
 import org.springframework.stereotype.Service;
 
 import java.io.File;

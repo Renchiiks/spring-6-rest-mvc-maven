@@ -89,7 +89,7 @@ public class DrinkController {
     @GetMapping(DRINK_PATH_ALL)
     public List<DrinkDTO> getAllDrinks(@RequestParam(required = false) String drinkName) {
         //log.debug("Getting all drinks in DrinkController");
-        return drinkService.getAllDrinks();
+        return drinkService.getAllDrinks(drinkName);
     }
 
 }

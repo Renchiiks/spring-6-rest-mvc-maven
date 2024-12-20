@@ -21,8 +21,19 @@ public class DrinkServiceJPA implements DrinkService {
     private final DrinkMapper drinkMapper;
 
     @Override
-    public List<DrinkDTO> getAllDrinks() {
-        return drinkRepository.findAll().stream().map(drinkMapper::drinkToDrinkDTO).toList();
+    public List<DrinkDTO> getAllDrinks(String drinkName) {
+        List<Drink> drinkList;
+        if (StringUtils.hasText(drinkName)){
+        drinkList = drinkListByName(drinkName);
+        }else{
+            drinkList = drinkRepository.findAll();
+        }
+       return drinkList.stream().map(drinkMapper::drinkToDrinkDTO).toList();
+
+
+    }
+    public List<Drink> drinkListByName(String name){
+        return  drinkRepository.findAllByDrinkNameContaining(name);
     }
 
     @Override

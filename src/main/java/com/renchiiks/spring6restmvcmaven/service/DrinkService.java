@@ -1,19 +1,14 @@
 package com.renchiiks.spring6restmvcmaven.service;
 
-import com.opencsv.bean.CsvToBeanBuilder;
-import com.renchiiks.spring6restmvcmaven.entities.DrinkCSVRecord;
 import com.renchiiks.spring6restmvcmaven.model.DrinkDTO;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 
 public interface DrinkService {
-    List<DrinkDTO> getAllDrinks();
+    List<DrinkDTO> getAllDrinks(String drinkName);
 
     Optional<DrinkDTO> getDrinkByUUID(UUID UUID);
 

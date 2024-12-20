@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +24,6 @@ import java.util.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -58,9 +56,9 @@ class DrinkControllerIT {
     @Test
     void testGetDrinksByName() throws Exception {
         mockMvc.perform(get(DrinkController.DRINK_PATH_ALL)
-                .queryParam("drinkName", "Water"))
+                .queryParam("drinkName", "ang"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(2)));
+                .andExpect(jsonPath("$.length()", is(18)));
     }
     @Test
     void testPatchDrinkNotFound() {
