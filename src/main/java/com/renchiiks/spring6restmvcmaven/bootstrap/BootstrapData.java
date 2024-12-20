@@ -2,15 +2,24 @@ package com.renchiiks.spring6restmvcmaven.bootstrap;
 
 import com.renchiiks.spring6restmvcmaven.entities.Customer;
 import com.renchiiks.spring6restmvcmaven.entities.Drink;
+import com.renchiiks.spring6restmvcmaven.entities.DrinkCSVRecord;
 import com.renchiiks.spring6restmvcmaven.model.DrinkStyle;
 import com.renchiiks.spring6restmvcmaven.repositories.CustomerRepository;
 import com.renchiiks.spring6restmvcmaven.repositories.DrinkRepository;
+import com.renchiiks.spring6restmvcmaven.service.DrinkCsvService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiredArgsConstructor
 @Component
@@ -18,11 +27,69 @@ public class BootstrapData implements CommandLineRunner {
 
     private final CustomerRepository customerRepository;
     private final DrinkRepository drinkRepository;
+    private final DrinkCsvService drinkCSVService;
 
+    @Transactional
     @Override
     public void run(String... args) {
         loadCustomers();
         loadDrinks();
+        loadCSVData();
+    }
+
+
+    private void loadCSVData() {
+
+        int min = 12;
+        int max = 300;
+        int randomNum = (int) (Math.random() * (max - min + 1)) + min;
+        if (drinkRepository.count() < 50) {
+
+            File file = null;
+            try {
+                file = ResourceUtils.getFile("classpath:csvdata/all_drinks.csv");
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
+            //AtomicInteger count = new AtomicInteger();
+
+            List<DrinkCSVRecord> recs = drinkCSVService.convertCSV(file);
+            recs.forEach(drinkCSVRecord ->
+                             {
+                                 DrinkStyle style = switch (drinkCSVRecord.getStrAlcoholic()) {
+                                     case "Alcoholic" -> DrinkStyle.ALCOHOLIC;
+                                     case "Non alcoholic" -> DrinkStyle.NON_ALCOHOLIC;
+                                     default -> DrinkStyle.NO_STYLE;
+                                 };
+                                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                                 String updateDate = LocalDateTime.parse(drinkCSVRecord.getDateModified(), formatter).toString();
+
+                                 if (updateDate.isEmpty() || updateDate.equals(" ")){
+                                     updateDate = LocalDateTime.now().toString();
+                                 }
+                                 if (updateDate.contains("T")) {
+                                     updateDate = updateDate.replace("T", " ");
+                                 }
+                                 if (updateDate.length()<= 16){
+                                     updateDate = updateDate.concat(":00");
+                                 }
+                                 //count.getAndIncrement();
+                                 //System.out.println(count.get());
+                                 drinkRepository.save(Drink.builder()
+                                                           .drinkName(drinkCSVRecord.getStrDrink())
+                                                           .price(BigDecimal.valueOf(10.0))
+                                                           .drinkStyle(style)
+                                                           .version(1)
+                                                           .quantityOnHand(randomNum)
+                                                           .upc(drinkCSVRecord.getIdDrink().toString())
+                                                           .createTime(LocalDateTime.parse(updateDate, formatter).minusYears(5))
+
+                                                           .updateTime(LocalDateTime.parse(updateDate, formatter))
+                                                           .build());
+                             });
+        }
+
     }
 
     private void loadDrinks() {

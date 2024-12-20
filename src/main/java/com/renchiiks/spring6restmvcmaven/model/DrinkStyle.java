@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 public enum DrinkStyle {
     ALCOHOLIC,
-    NON_ALCOHOLIC
+    NON_ALCOHOLIC,
+    NO_STYLE
 
 }

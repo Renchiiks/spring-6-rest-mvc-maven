@@ -80,9 +80,15 @@ public class DrinkController {
         return drinkService.getDrinkByUUID(uuid).orElseThrow(NotFoundException::new);
     }
 
+//    @GetMapping(DRINK_PATH_ALL)
+//    public List<DrinkDTO> getAllDrinks() {
+//        log.debug("Getting all drinks in DrinkController");
+//        return drinkService.getAllDrinks();
+//    }
+
     @GetMapping(DRINK_PATH_ALL)
-    public List<DrinkDTO> getAllDrinks() {
-        log.debug("Getting all drinks in DrinkController");
+    public List<DrinkDTO> getAllDrinks(@RequestParam(required = false) String drinkName) {
+        //log.debug("Getting all drinks in DrinkController");
         return drinkService.getAllDrinks();
     }
 

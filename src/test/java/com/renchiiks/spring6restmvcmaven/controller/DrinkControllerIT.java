@@ -25,6 +25,8 @@ import java.util.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.is;
@@ -52,6 +54,14 @@ class DrinkControllerIT {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
+
+    @Test
+    void testGetDrinksByName() throws Exception {
+        mockMvc.perform(get(DrinkController.DRINK_PATH_ALL)
+                .queryParam("drinkName", "Water"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(2)));
+    }
     @Test
     void testPatchDrinkNotFound() {
         assertThrows(NotFoundException.class, () -> drinkController.patchDrink(UUID.randomUUID(), DrinkDTO.builder().build()));
@@ -144,8 +154,8 @@ class DrinkControllerIT {
 
     @Test
     void testGetAllDrinks() {
-        List<DrinkDTO> drinks = drinkController.getAllDrinks();
-        assertThat(drinks.size()).isEqualTo(3);
+        List<DrinkDTO> drinks = drinkController.getAllDrinks(null);
+        assertThat(drinks.size()).isGreaterThan(100);
     }
 
     @Rollback
@@ -153,7 +163,7 @@ class DrinkControllerIT {
     @Test
     void testEmptyGetAllDrinks() {
         drinkRepository.deleteAll();
-        List<DrinkDTO> drinks = drinkController.getAllDrinks();
+        List<DrinkDTO> drinks = drinkController.getAllDrinks(null);
         assertThat(drinks.size()).isEqualTo(0);
     }
 
